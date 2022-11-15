@@ -1,0 +1,37 @@
+from django.db import models
+
+# Create your models here.
+
+
+class GeneStorage(models.Model):
+    id = models.AutoField(primary_key=True)
+    chromosome = models.CharField(max_length=10)
+    start_pos = models.IntegerField()
+    end_pos = models.IntegerField()
+    observed = models.TextField()
+    reference = models.TextField(default=None, null=True, blank=True)
+    zygosity = models.TextField(default=None)
+    refGene_function = models.TextField(default=None, null=True, blank=True)
+    refGene_gene = models.TextField()
+    quality = models.TextField(default=None, null=True, blank=True)
+    refGene_exonic_function = models.TextField(default=None, null=True, blank=True)
+    AC = models.TextField(default=None, null=True, blank=True)
+    AC_hom = models.TextField(default=None, null=True, blank=True)
+    aug_all = models.TextField(default=None, null=True, blank=True)
+    ExAC_ALL = models.TextField(default=None, null=True, blank=True)
+    gnomAD_exome_AF = models.TextField(default=None, null=True, blank=True)
+    Kaviar_AF = models.TextField(default=None, null=True, blank=True)
+    SIFT_pred_41a = models.TextField(default=None, null=True, blank=True)
+    SIFT4G_pred_41a = models.TextField(default=None, null=True, blank=True)
+    Polyphen2_HDIV_pred_41a = models.TextField(default=None, null=True, blank=True)
+    Polyphen2_HVAR_pred_41a = models.TextField(default=None, null=True, blank=True)
+    CADD_phred_41a = models.TextField(default=None, null=True, blank=True)
+    CLNSIG = models.TextField(default=None, null=True, blank=True)
+    refGene_splice = models.TextField(default=None, null=True, blank=True)
+    refGene_AA = models.TextField(default=None, null=True, blank=True)
+    filename = models.TextField(default=None, null=True, blank=True)
+    count_hom = models.IntegerField(default=None, null=True, blank=True)
+    count_het = models.IntegerField(default=None, null=True, blank=True)
+    count_total = models.IntegerField(default=None, null=True, blank=True)
+    files_uploaded = models.IntegerField(default=None, null=True, blank=True)
+    New_allele_frequency = models.FloatField(default=None, null=True, blank=True)

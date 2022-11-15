@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Login {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+        <div class="d-flex justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="d-flex justify-content-center">
+              <form role="form" method="post" action="">
+              
+                {% csrf_token %} 
+
+                <div class="card-header">
+                  <div class="d-flex justify-content-center">
+                  <h3 class="title">Login</h3>
+                  </div>
+                  <h6 class="card-category">
+                    <div class="d-flex justify-content-center">
+                      {% if msg %}
+                        <span class="text-danger">{{ msg }}</span>
+                      {% else %}
+                        Add your credentials
+                      {% endif %}  
+                    </div>
+                  </h6>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-center">
+                      
+                      <div class="col-md-12 px-md-1">
+                        <div class="form-group">
+                          <label>Username</label>
+                          {{ form.username }}
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="d-flex justify-content-center">
+
+                      <div class="col-md-12 px-md-1">
+                        <div class="form-group">
+                          <label>Password</label>
+                          {{ form.password }}
+                        </div>
+                      </div>
+
+                    </div>
+                    
+                </div>
+              <div class="card-footer">
+                <div class='d-flex justify-content-center'>
+                <button type="submit" name="login" class="btn btn-success">Login</button>
+                </div>
+                <br>
+                <div class="d-flex justify-content-center">
+                    Don't have an account? &nbsp;
+                    <a href="{% url 'register' %}" class="text-primary">Create</a>
+                </div>
+              </div>
+
+              </form>
+            </div>
+            </div>
+          </div>
+      </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

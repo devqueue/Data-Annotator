@@ -1,0 +1,93 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} export {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+<div class="d-flex justify-content-center">
+<div class="col-md-12">
+<div class="card">
+<form role="form" method="post" action="">
+{% csrf_token %}
+<div class="card-body">
+
+<div class="d-flex flex-grow-1 bd-highlight">
+    <div class="p-2 flex-fill bd-highlight ml-12"> 
+        <input type="search" id='search' class="form-control" style="height:43px" placeholder="Search filename" name="search">
+    </div>
+    <div class="p-1 bd-highlight">
+      <button type="submit" class="btn btn-info" >
+      <i class="tim-icons icon-zoom-split"></i>
+      </button>
+      <input type="submit" value="Export" class="btn btn-info" name="export">
+    </div>
+</div>
+</form>
+<br>
+<br>
+  <div class="col-md-12">
+    <div class="card ">
+      <div class="card-header">
+        <h4 class="card-title"> Result</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive" style="overflow:auto;">
+          <table class="table tablesorter " id="">
+          <thead class=" text-primary">
+            <tr>
+              {% for i in df_header %}
+                <th>{{i}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in df %}
+              <tr>
+                {% for j in i.values %}
+                  <td>{{j}}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+
+
+
+{% block javascripts %}
+ <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      $('#search').keypress(function (e) {
+        if (e.which == 13) {
+          $('form').submit();
+          return false;    
+        }
+      });
+
+      $(function () {
+        let filename = '{{filename | safe}}';
+        $('#search').val(filename);
+                
+      });
+    
+      
+    });
+
+{% if notfound %}
+ demo.showNotification('top','right', 'File not found. Please check the filename again' , 3)
+{% endif %}
+</script>
+
+{% endblock javascripts %}

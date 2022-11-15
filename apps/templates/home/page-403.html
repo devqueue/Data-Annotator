@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Page 404 {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-profile">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                    <h1 class="text-gray">403 Unauthorized</h1>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                    <h4 class="card-title">
+                        Access Denied - Please contact the admin for Access
+                    </h4>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                    <a href="{% url 'search' %}" class="btn btn-info btn-round">Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
