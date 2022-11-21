@@ -2,36 +2,36 @@ from django.db import models
 
 # Create your models here.
 
+# todo: fetch users from table
+USERS = []
 
-class GeneStorage(models.Model):
-    id = models.AutoField(primary_key=True)
-    chromosome = models.CharField(max_length=10)
-    start_pos = models.IntegerField()
-    end_pos = models.IntegerField()
-    observed = models.TextField()
-    reference = models.TextField(default=None, null=True, blank=True)
-    zygosity = models.TextField(default=None)
-    refGene_function = models.TextField(default=None, null=True, blank=True)
-    refGene_gene = models.TextField()
-    quality = models.TextField(default=None, null=True, blank=True)
-    refGene_exonic_function = models.TextField(default=None, null=True, blank=True)
-    AC = models.TextField(default=None, null=True, blank=True)
-    AC_hom = models.TextField(default=None, null=True, blank=True)
-    aug_all = models.TextField(default=None, null=True, blank=True)
-    ExAC_ALL = models.TextField(default=None, null=True, blank=True)
-    gnomAD_exome_AF = models.TextField(default=None, null=True, blank=True)
-    Kaviar_AF = models.TextField(default=None, null=True, blank=True)
-    SIFT_pred_41a = models.TextField(default=None, null=True, blank=True)
-    SIFT4G_pred_41a = models.TextField(default=None, null=True, blank=True)
-    Polyphen2_HDIV_pred_41a = models.TextField(default=None, null=True, blank=True)
-    Polyphen2_HVAR_pred_41a = models.TextField(default=None, null=True, blank=True)
-    CADD_phred_41a = models.TextField(default=None, null=True, blank=True)
-    CLNSIG = models.TextField(default=None, null=True, blank=True)
-    refGene_splice = models.TextField(default=None, null=True, blank=True)
-    refGene_AA = models.TextField(default=None, null=True, blank=True)
-    filename = models.TextField(default=None, null=True, blank=True)
-    count_hom = models.IntegerField(default=None, null=True, blank=True)
-    count_het = models.IntegerField(default=None, null=True, blank=True)
-    count_total = models.IntegerField(default=None, null=True, blank=True)
-    files_uploaded = models.IntegerField(default=None, null=True, blank=True)
-    New_allele_frequency = models.FloatField(default=None, null=True, blank=True)
+class LABELS(models.IntegerChoices):
+    TRUE = 1
+    FALSE = 0
+class TAGS(models.TextChoices):
+    O = 'O'
+    Object = 'Object'
+    Attribute = 'Attribute'
+    Function = 'Function'
+    Operator = 'Operator'
+    Value = 'Value'
+    Unit = 'Unit'
+
+
+class Sentance(models.Model):
+    id = models.IntegerField(primary_key=True)
+    sentance = models.TextField()
+    classified_by = models.TextField()
+    tagged_by = models.TextField()
+
+
+class Classification(models.Model):
+    id = models.IntegerField(primary_key=True)
+    sentance = models.TextField()
+    label = models.IntegerField(choices=LABELS.choices)
+
+class NER(models.Model):
+    id = models.IntegerField(primary_key=True)
+    sentance = models.IntegerField()
+    words = models.TextField()
+    tag = models.TextField(choices=TAGS.choices)
