@@ -34,4 +34,6 @@ class NER(models.Model):
     id = models.IntegerField(primary_key=True)
     sentance = models.IntegerField()
     words = models.TextField()
-    tag = models.TextField(choices=TAGS.choices)
+    tag1 = models.TextField(choices=TAGS.choices)
+    tag2 = models.TextField(choices=TAGS.choices)
+    tag3 = models.TextField(choices=TAGS.choices)
