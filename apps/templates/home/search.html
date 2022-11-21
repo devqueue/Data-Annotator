@@ -11,6 +11,14 @@
   .mt-100 {
     margin-top: 20px
 }
+
+.form-control::placeholder {
+  color: black !important;
+  font-size: 25 !important;
+  font-weight: bold !important;
+  text-align: center !important;
+
+}
 </style>
 {% load static %}
 <link rel="stylesheet" href="{% static 'assets/css/choices.min.css' %}">
@@ -39,85 +47,28 @@ function validateForm() {
 
 <div class="d-flex flex-grow-1 bd-highlight">
 <div class="p-2 flex-fill bd-highlight">
-<div class="input-group mb-3">
-  <div class="input-group-prepend">
-    <select class="btn btn-outline-secondary dropdown-toggle"  type="button" name="type" id='type' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      {% for type in types %}
-      <option value="{{type}}">{{type}}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <input type="search" id='search' class="form-control" style="height:43px" placeholder="Search Gene" name="search">
+<div class="">
+  <label for="sentance"></label>
+  <input type="text" id='search' class="form-control" style="height:43px" placeholder="{{sentance}}"  name="search" readonly>
 </div>
 </div>
 <br>
 </div>
 
-<div id="positions"> 
-<div class="d-flex flex-grow-1 bd-highlight">
-<div class="p-2 flex-fill bd-highlight">
-  <label for="start">Start pos:</label>
-  <input type="number" id="start" name="start" class="form-control">
+<div class="d-flex flex-row justify-content-center">
+      <div class="form-check form-check-inline">
+        {{form.NUMS}}
+      </div>
 </div>
-
-<div class="p-2 flex-fill bd-highlight">
-  <label for="end">End pos:</label>
-  <input type="number" id="end" name="end" class="form-control">
-</div>
-</div>
-</div>
-
-<div class="d-flex flex-grow-1 bd-highlight">
-  <div class="p-2 flex-fill bd-highlight ml-12"> 
-      <select id="choices-multiple-remove-button" name='columns' placeholder="Select columns" multiple>
-          {% for column in df_header_all %}
-            <option value="{{column}}">{{column}}</option>
-          {% endfor %}
-      </select> 
-    </div>
-    <div class="p-1 bd-highlight"> 
-      <button type="submit" class="btn btn-info" >
-      <i class="tim-icons icon-zoom-split"></i>
-      </button>
-    </div>
-  <div class="p-1 bd-highlight">
-      <input type="submit" value="Export" class="btn btn-info" name="export">
-        
+<br>
+<div class="d-flex flex-row-reverse">
+      <input type="submit" value="Submit" class="btn btn-info" name="Submit">
       </input>
   </div>
 </div>
 </form>
 <br>
 <br>
- {% comment %}  <!-- <div class="col-md-12">
-    <div class="card ">
-      <div class="card-header">
-        <h4 class="card-title"> Result</h4>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive" style="overflow:auto;">
-          <table class="table tablesorter " id="">
-          <thead class=" text-primary">
-            <tr>
-              {% for i in df_header %}
-                <th>{{i}}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for i in df %}
-              <tr>
-                {% for j in i.values %}
-                  <td>{{j}}</td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-        </div>
-      </div> --> {% endcomment %}
-    </div>
-  </div>
 
 
 {% endblock content %}
@@ -135,125 +86,9 @@ function validateForm() {
         }
       });
 
-      $(function () {
-        let type = '{{sel_type}}';
-        $('#type').val(type);
-                
-        let search_query = '{{search | safe}}';
-        $('#search').val(search_query);
-
-        let start = '{{start}}';
-        $('#start').val(start);
-
-        let end = '{{end}}';
-        $('#end').val(end);
-
-        let options = [{{columns_req|safe}}] ;
-        $('#choices-multiple-remove-button').val(options[0]);
-      });
-
-
-
-      $('thead').addClass('text-primary')
-
-      var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
-        removeItemButton: true,
-        maxItemCount:30,
-        searchResultLimit:15,
-        renderChoiceLimit:50
-      });
-
-      $('#type').change(function(){
-        var type = $('#type').val();
-        console.log(type)
-        if (type === 'Gene'){
-          $('#positions').hide();
-        } 
-        else{
-          $('#positions').show();
-        }
-      
-    });
-
-    $(function(){
-        var type = $('#type').val();
-        console.log(type)
-        if (type === 'Gene'){
-          $('#positions').hide();
-        } 
-        else{
-          $('#positions').show();
-        }
-      
-    });
-
     });
 
 
-  function tableToCSV() {
-
-      // Variable to store the final csv data
-      var csv_data = [];
-
-      // Get each row data
-      var rows = document.getElementsByTagName('tr');
-      for (var i = 0; i < rows.length; i++) {
-
-          // Get each column data
-          var cols = rows[i].querySelectorAll('td,th');
-
-          // Stores each csv row data
-          var csvrow = [];
-          for (var j = 0; j < cols.length; j++) {
-
-              // Get the text data of each cell
-              // of a row and push it to csvrow
-              csvrow.push(cols[j].innerHTML);
-          }
-
-          // Combine each column value with comma
-          csv_data.push(csvrow.join(","));
-      }
-
-      // Combine each row data with new line character
-      csv_data = csv_data.join('\n');
-
-      // Call this function to download csv file 
-      if (rows.length > 1){
-        downloadCSVFile(csv_data);
-      }
-      else{
-        demo.showNotification('top','right', 'No table found. Retrieve a table first' , 3)
-      }
-
-  }
-
-  function downloadCSVFile(csv_data) {
-
-      // Create CSV file object and feed
-      // our csv_data into it
-      CSVFile = new Blob([csv_data], {
-          type: "text/csv"
-      });
-
-      // Create to temporary link to initiate
-      // download process
-      var temp_link = document.createElement('a');
-
-      // Download csv file
-      temp_link.download = "exported.csv";
-      var url = window.URL.createObjectURL(CSVFile);
-      temp_link.href = url;
-
-      // This link should not be displayed
-      temp_link.style.display = "none";
-      document.body.appendChild(temp_link);
-
-      // Automatically click the link to
-      // trigger download
-      temp_link.click();
-      document.body.removeChild(temp_link);
-  }
 
   </script>
 
