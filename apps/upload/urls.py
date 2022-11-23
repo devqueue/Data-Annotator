@@ -5,6 +5,6 @@ from . import views
 
 urlpatterns = [
     path('upload', views.upload_file, name="upload"),
-    path('compute', views.compute, name="compute"),
-    path('uploadapi',views.UploadView.as_view()),
+    # path('compute', views.compute, name="compute"),
+    # path('uploadapi',views.UploadView.as_view()),
 ]

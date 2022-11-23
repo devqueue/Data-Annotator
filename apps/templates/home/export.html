@@ -17,7 +17,10 @@
 
 <div class="d-flex flex-grow-1 bd-highlight">
     <div class="p-2 flex-fill bd-highlight ml-12"> 
-        <input type="search" id='search' class="form-control" style="height:43px" placeholder="Search filename" name="search">
+      <select name="table" id="table" onchange="" class="form-select" aria-label="Default select example">
+      <option value="NER">Named Entity Recognition</option>
+      <option value="Classification">Classification</option>
+    </select>
     </div>
     <div class="p-1 bd-highlight">
       <button type="submit" class="btn btn-info" >

@@ -12,20 +12,20 @@
         </div>
         {% if request.user.is_authenticated %}
         <ul class="nav">
-          <li class="{% if 'search' in segment %} active {% endif %}">
-            <a href="{% url 'search' %}">
+          <li class="{% if 'classification' in segment %} active {% endif %}">
+            <a href="{% url 'classification' %}">
               <i class="tim-icons  icon-zoom-split "></i>
               <p>Classification</p>
             </a>
           </li>
-          <li class="">
-            <a href="">
+          <li class="{% if 'ner' in segment %} active {% endif %} ">
+            <a href="{% url 'ner' %}"">
               <i class="tim-icons icon-badge"></i>
               <p>Entity Tagging </p>
             </a>
           </li>
-          <li class="{% comment %} {% if 'export' in segment %} active {% endif %} {% endcomment %}">
-             <a href="{% comment %}{% url 'export' %}{% endcomment %}"> 
+          <li class="{% if 'export' in segment %} active {% endif %}">
+             <a href="{% url 'export' %}"> 
               <i class="tim-icons icon-cloud-download-93"></i>
               <p>Export</p>
             </a>

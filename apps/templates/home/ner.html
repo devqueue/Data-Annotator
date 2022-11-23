@@ -23,6 +23,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'assets/css/choices.min.css' %}">
 <script src="{% static 'assets/js/choices.min.js' %}"></script>
+
 <!-- Page specific css and JS -->
 
 <div class="d-flex justify-content-center">
@@ -43,12 +44,30 @@
 </div>
 <br>
 </div>
+<div class="d-flex flex-wrap">
+  {% for word in words %}
+    <input type="text" id='search' class="form-control" style="height:43px; width:20%;" placeholder="{{word}}" name="search"
+      readonly>
+    <input type="hidden" name="word" value="{{word}}">
 
-<div class="d-flex flex-row justify-content-center">
-      <div class="form-check form-check-inline">
-        {{form.NUMS}}
-      </div>
-</div>
+    <select name="{{word}}" id="{{word}}" onchange="" class="form-select" aria-label="Default select example">
+      <option value="Object">Object</option>
+      <option value="I-Object">I-Object</option>
+      <option value="Attribute">Attribute</option>
+      <option value="I-Attribute">I-Attribute</option>
+      <option value="Operator">Operator</option>
+      <option value="I-Operator">I-Operator</option>
+      <option value="Function">Function</option>
+      <option value="I-Function">I-Function</option>
+      <option value="Value">Value</option>
+      <option value="I-Value">I-Value</option>
+      <option value="Unit">Unit</option>
+      <option value="I-Unit">I-Unit</option>
+      <option value="O">O</option>
+    </select>
+  {% endfor %}
+</div>  
+
 <br>
 <div class="d-flex flex-row-reverse">
       <input type="submit" value="Submit" class="btn btn-info" name="Submit">
