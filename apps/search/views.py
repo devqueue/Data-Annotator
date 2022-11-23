@@ -1,71 +1,130 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import GeneStorage
+from .models import Classification, NER, Sentance_for_classification, Sentance_for_tagging
 import pandas as pd
 from django.http import HttpResponse
 from apps.utils import allowed_users
+from .forms import CHOICES
+import datetime
+
 # Create your views here.
 
 
 @login_required(login_url='accounts/login_user')
 @allowed_users(allowed_roles=['compute', 'search'])
-def search_gene(request):
+def classification_view(request):
     context = {
-        'segment': 'search',
-        'types': ['Chromosome', 'Gene'],
+        'segment': 'classification'
     }
+
+    form = CHOICES(request.POST)
+    context['form'] = form
+
     if request.method == 'POST':
+        if form.is_valid():
+            id = request.POST.get("sentanceid")
+            sentance = request.POST.get("sentance")
+            selected = form.cleaned_data.get("NUMS")
+
         try:
-            search = request.POST.get("search")
-            select_type = request.POST.get("type")
-            start = request.POST.get('start', default=None)
-            end = request.POST.get('end', default=None)
-            export = request.POST.get('export')
-            columns_required = request.POST.getlist('columns')
-            context['sel_type'] = select_type
-            context['search'] = search
-            context['columns_req'] = columns_required
-            context['start'] = start
-            context['end'] = end
+            username = request.user.username
+            Classification_item = Classification(id=id, sentance=sentance, label=selected)
+            Classification_item.save()
+            sentance_item = Sentance_for_classification.objects.get(pk=id)
+            sentance_item.classified_by = username
+            sentance_item.save()
 
-            if select_type == 'Gene':
-                if (search.startswith('"') and search.endswith('"')):
-                    search = search.replace('"', '')
-                    result = GeneStorage.objects.filter(refGene_gene__icontains=search).values()
-                else:
-                    result = GeneStorage.objects.filter(refGene_gene__icontains=search).values()
-            else:
-                result = GeneStorage.objects.filter(chromosome=search, start_pos=start, end_pos=end).values()
-
-            df = pd.DataFrame(list(result))
-            df = df.rename({'aug_all': '1000genome'}, axis=1)
-
-            df.dropna(how='all', axis=1, inplace=True)
-            context['df_header_all'] = list(df.columns)
-            if columns_required != []:
-                df.drop(df.columns.difference(columns_required), axis=1, inplace=True)
-            else:
-                df.drop(df.columns.difference(['chromosome', 'start_pos', 'end_pos', 'observed', 'refGene gene',
-                        'zygosity', 'filename', 'count_hom', 'count_het', 'count_total', 'New_allele_frequency']), axis=1, inplace=True)
-                
-            context['df'] = df.to_dict('records')
-            context['df_header'] = list(df.columns)
-
-            if export:
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = f'attachment; filename=exported.csv'
-                export = pd.DataFrame(list(result))
-                export = export.rename({'aug_all': '1000genome'}, axis=1)
-                export.dropna(how='all', axis=1, inplace=True)
-                export.to_csv(path_or_buf=response)
-                return response
-
-            return render(request, 'home/search.html', context)
+            return redirect("/")
         except Exception as e:
             print('[ERROR]:', e)
-            context['sel_type'] = 'Chromosome'
-            return render(request, 'home/search.html', context)
+            return redirect("/")
     else:
-        context['sel_type'] = 'Chromosome'
+        result = Sentance_for_classification.objects.filter(classified_by='')
+        if result:
+            context['sentance'] = result[0].sentance
+            context['id'] = result[0].id
         return render(request, 'home/search.html', context)
 
+
+@login_required(login_url='accounts/login_user')
+@allowed_users(allowed_roles=['compute', 'search'])
+def ner(request):
+    context = {
+        'segment': 'ner'
+    }
+
+    username = request.user.username
+
+    if request.method == 'POST':
+        
+        id = request.POST.get("sentanceid")
+        sentance = request.POST.get("sentance")
+        words = sentance.split()
+        list_of_tags = [request.POST.get(word) for word in words]
+
+
+        try:
+            for word, tag in zip(words, list_of_tags):
+                tagging_item = NER(sentance=id, word=word, tag=f'{tag}, ')
+                tagging_item.save()
+            sentance_item = Sentance_for_tagging.objects.get(pk=id)
+            sentance_item.tagged_by += f'{username}, '
+            sentance_item.save()
+
+            return redirect("/ner")
+        except Exception as e:
+            print('[ERROR]:', e)
+            return redirect("/ner")
+    else:
+        result = Sentance_for_tagging.objects.all()
+        result2 = NER.objects.all()
+        print(result2)
+        print(result)
+        result = result.exclude(tagged_by__contains=f'{username}')
+
+        if result:
+            context['sentance'] = result[0].sentance
+            context['id'] = result[0].id
+            words = context['sentance'].split()
+            context['words'] = words
+        return render(request, 'home/ner.html', context)
+
+
+@login_required(login_url='login/')
+@allowed_users(allowed_roles=['compute', 'search'])
+def export(request):
+    context = {
+        'segment': 'export',
+    }
+    if request.method == 'POST':
+        table = request.POST.get('table')
+        export = request.POST.get('export') 
+        context['table'] = table
+            
+        if table == 'NER':
+            df = pd.DataFrame(list(NER.objects.all().values()))
+            df = df.tail(50)
+            context['df_header'] = list(df.columns)
+            context['df'] = df.to_dict('records')
+        elif table == 'Classification':
+            df = pd.DataFrame(list(Classification.objects.all().values()))
+            df = df.tail(50)
+            context['df_header'] = list(df.columns)
+            context['df'] = df.to_dict('records')
+        else:
+            context['notselected'] = True
+            return render(request, 'home/export.html', context)
+        
+        if df.empty:
+            context['empty'] = True
+            return render(request, 'home/export.html', context)
+
+        if export:
+            timestamp = datetime.datetime.now()
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename={table}-{timestamp}.csv'
+            print("[INFO]: Table FOUND")
+            df.to_csv(path_or_buf=response, index=False)
+            return response
+
+    return render(request, 'home/export.html', context)
