@@ -17,10 +17,11 @@
 
 <div class="d-flex flex-grow-1 bd-highlight">
     <div class="p-2 flex-fill bd-highlight ml-12"> 
-      <select name="table" id="table" onchange="" class="form-select" aria-label="Default select example">
-      <option value="NER">Named Entity Recognition</option>
-      <option value="Classification">Classification</option>
-    </select>
+      <select name="table" id="table" class="form-select" aria-label="Default select example">
+        <option disabled selected value="None">Select data</option>
+        <option value="NER">Named Entity Recognition</option>
+        <option value="Classification">Classification</option>
+      </select>
     </div>
     <div class="p-1 bd-highlight">
       <button type="submit" class="btn btn-info" >
@@ -72,24 +73,23 @@
  <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/js/demos.js
-      $('#search').keypress(function (e) {
-        if (e.which == 13) {
-          $('form').submit();
-          return false;    
-        }
-      });
 
       $(function () {
-        let filename = '{{filename | safe}}';
-        $('#search').val(filename);
-                
+        if ('{{table}}' != ''){
+          let filename = '{{table | safe}}';
+          $('#table').val(filename);
+        }       
       });
     
       
     });
 
-{% if notfound %}
- demo.showNotification('top','right', 'File not found. Please check the filename again' , 3)
+{% if empty %}
+ demo.showNotification('top','right', 'Database is empty. Make some entried to populate the database' , 3)
+{% endif %}
+
+{% if notselected %}
+ demo.showNotification('top','right', 'Please Select a database before submitting' , 3)
 {% endif %}
 </script>
 
