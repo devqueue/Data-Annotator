@@ -76,15 +76,14 @@ def ner(request):
             print('[ERROR]:', e)
             return redirect("/ner")
     else:
-        result = Sentance_for_tagging.objects.all()
-        result2 = NER.objects.all()
-        print(result2)
-        print(result)
-        result = result.exclude(tagged_by__contains=f'{username}')
+        resDf = pd.DataFrame(Sentance_for_tagging.objects.all().values())
+        resDf = resDf.loc[~resDf['tagged_by'].str.contains(f"{username}")]
+        resDf = resDf.sort_values(by=['id'], ascending=True)
+        result = resDf.head(1)
 
-        if result:
-            context['sentance'] = result[0].sentance
-            context['id'] = result[0].id
+        if not result.empty:
+            context['sentance'] = list(result['sentance'])[0]
+            context['id'] = list(result['id'])[0]
             words = context['sentance'].split()
             context['words'] = words
         return render(request, 'home/ner.html', context)
@@ -103,14 +102,14 @@ def export(request):
             
         if table == 'NER':
             df = pd.DataFrame(list(NER.objects.all().values()))
-            df = df.tail(50)
-            context['df_header'] = list(df.columns)
-            context['df'] = df.to_dict('records')
+            df1 = df.tail(50)
+            context['df_header'] = list(df1.columns)
+            context['df'] = df1.to_dict('records')
         elif table == 'Classification':
             df = pd.DataFrame(list(Classification.objects.all().values()))
-            df = df.tail(50)
-            context['df_header'] = list(df.columns)
-            context['df'] = df.to_dict('records')
+            df1 = df.tail(50)
+            context['df_header'] = list(df1.columns)
+            context['df'] = df1.to_dict('records')
         else:
             context['notselected'] = True
             return render(request, 'home/export.html', context)
