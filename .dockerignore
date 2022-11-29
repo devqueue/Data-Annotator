@@ -9,6 +9,7 @@ LICENSE.md
 .docker
 data/
 testing/
+testing.*
 # Python
 venv/
 *.pyc
