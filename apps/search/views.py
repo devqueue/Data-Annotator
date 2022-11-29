@@ -86,6 +86,7 @@ def ner(request):
             context['id'] = list(result['id'])[0]
             words = context['sentance'].split()
             context['words'] = words
+        print("Rendered")
         return render(request, 'home/ner.html', context)
 
 
