@@ -77,11 +77,12 @@ def ner(request):
             return redirect("/ner")
     else:
         resDf = pd.DataFrame(Sentance_for_tagging.objects.all().values())
-        resDf = resDf.loc[~resDf['tagged_by'].str.contains(f"{username}")]
-        resDf = resDf.sort_values(by=['id'], ascending=True)
-        result = resDf.head(1)
 
-        if not result.empty:
+        if not resDf.empty:
+            resDf = resDf.loc[~resDf['tagged_by'].str.contains(f"{username}")]
+            resDf = resDf.sort_values(by=['id'], ascending=True)
+            result = resDf.head(1)
+
             context['sentance'] = list(result['sentance'])[0]
             context['id'] = list(result['id'])[0]
             words = context['sentance'].split()
